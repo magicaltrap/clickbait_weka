@@ -70,15 +70,44 @@ Again, these features may or may not be useful for this task. You need to test i
 After downloading the dataset (with `instances.jsonl` and `truth.jsonl`) run the `preprocessing.py` file to create an `.arff` file for Weka. Run this command:
 
 ```
-python preprocessing.py --path_training <instances.jsonl location>
-                        --path_truth <truth.jsonl location>
-                        --output_path_training <location where you want to save the training .arff file>
-                        --output_path_test <location where you want to save the test .arff file>
-                        --size_test_set <how much of the dataset should be set aside for the test set (default 0.3)>
-
-parser.add_argument("--path_training", type=str, help="path to clickbait training jsonl file")
-parser.add_argument("--path_truth", type=str, help="path to clickbait truth jsonl file")
-parser.add_argument("--output_path_training", type=str, help="output path of arff training file")
-parser.add_argument("--output_path_test", type=str, help="output path of arff test file")
-parser.add_argument("--size_test_set", type=float, default=0.3, help="size of the test set in regard to the whole dataset (e.g. 0.2, 0.3, 0.4 of whole dataset")
+python preprocessing.py --path_training <location of instances.jsonl>
+                        --path_truth <location of truth.jsonl>
+                        --output_path_training <location you want to save the training .arff file>
+                        --output_path_test <location you want to save the test .arff file>
+                        --size_test_set <how much of the dataset should be set aside for the test set(float)? (default 0.3)>
 ```
+
+## Training in Weka
+Now we can use our dataset in Weka.
+
+1. Open Weka Explorer and open our `clickbait_training.arff` file ("Open File). Our training file consists of 13639 examples and the ratio is 76% no-clickbait posts and 24% clickbait post. Unfortunately, this dataset is not balanced (almost three times more no-clickbait posts than clickbait posts) Therefore, our model should hopefully output an accuracy higher than 76% accuracy (because we could achieve an accuracy score of 76% if we just mark every example as "no-clickbait").  
+![ratio](./images/01_ratio.PNG)
+
+2. Let's use a basic Naive Bayes model for this task first. Open the `Classify` tab and choose a Filtered Classifier: `Weka->classifiers->meta->FilteredClassifier`. 
+If you have used Weka before, you may wonder why not use the Naive Bayes classifier immediately (`Weka->classifiers->bayes->NaiveBayes`) instead of  a `FilteredClassifier`? It's because of the first feature in our preprocessed file `ID (of an example)`. Normally, you would just add numeric (e.g. `word count`) or nominal features (e.g. `whether start with number`) in a .arff file. In that case, you could directly use Weka models on the dataset. The `ID` of an instance is neither numeric nor nominal so this is something that a Weka model can't process and we need a `FilteredClassifier` for that. With a `FilteredClassifier` we can tell the model to ignore a feature during training but still keep it in the datatset. I decided to add the `ID` in the .arff file so I can output predictions during test time later (`e.g. ID: 858224473597779969, prediction: "clickbait"` as a .txt or .csv file) if necessary.   
+![NaiveBayes](./images/02_NaiveBayes.PNG)
+
+3. Click on "FilteredClassifier" (1). Choose from "classifier" tab `NaiveBayes (weka->classifiers->bayes->NaiveBayes)`(2). Then choose from the "filter" tab `weka->filters->unsupervised->attribute->Remove` (3). With this, we can ignore an attribute during training time. 
+![remove](./images/03_remove.PNG)
+
+4. Click on "Remove" and type "First" in the "attributeIndices" tab. This will ignore our first feature (`ID`) during training time.
+![First](./images/04_first.PNG)
+
+5) Now press "Start" to train our Machine Learning model. You can use either `Use training set`, `Cross-validation` or `Percentage split`. I use 10-Folds Cross-validation for now. Weka prints out an overview of our results with many useful scores and numbers:
+![results_training](./images/05_training_results.PNG)
+
+As we can see, our Naive Bayes model classified 10761 correct examples (78.9%) and 2878 incorrect examples (21.1%). So at least, it is a bit better than our initial dataset distribition (76%/24%). 
+
+
+#TODO
+- analyse results (FP rate)
+- print out Confusion Matrix
+- run Wrapper to select useful features
+- save and load model
+- run our test set on it
+- results of test set
+- you can replace the label with ? (add a source)
+- if you want, you can print out as csv file
+
+
+
