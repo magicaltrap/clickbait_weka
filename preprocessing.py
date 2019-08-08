@@ -1,5 +1,5 @@
 import json
-import arff ## https://pypi.python.org/pypi/liac-arff
+import arff #https://pypi.python.org/pypi/liac-arff
 import argparse
 import re
 import itertools
