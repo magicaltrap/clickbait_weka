@@ -62,3 +62,23 @@ Again, these features may or may not be useful for this task. You need to test i
 # Requirements
 * Download the latest [Weka](https://www.cs.waikato.ac.nz/ml/weka/downloading.html "Weka") version.
 * to create an .arff file, you need to download the [arff library](https://pypi.python.org/pypi/liac-arff) in your environment: `pip install liac-arff`
+
+# Usage
+
+## Preprocessing
+
+After downloading the dataset (with `instances.jsonl` and `truth.jsonl`) run the `preprocessing.py` file to create an `.arff` file for Weka. Run this command:
+
+```
+python preprocessing.py --path_training <instances.jsonl location>
+                        --path_truth <truth.jsonl location>
+                        --output_path_training <location where you want to save the training .arff file>
+                        --output_path_test <location where you want to save the test .arff file>
+                        --size_test_set <how much of the dataset should be set aside for the test set (default 0.3)>
+
+parser.add_argument("--path_training", type=str, help="path to clickbait training jsonl file")
+parser.add_argument("--path_truth", type=str, help="path to clickbait truth jsonl file")
+parser.add_argument("--output_path_training", type=str, help="output path of arff training file")
+parser.add_argument("--output_path_test", type=str, help="output path of arff test file")
+parser.add_argument("--size_test_set", type=float, default=0.3, help="size of the test set in regard to the whole dataset (e.g. 0.2, 0.3, 0.4 of whole dataset")
+```
