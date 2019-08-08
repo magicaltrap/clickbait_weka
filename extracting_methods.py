@@ -104,16 +104,3 @@ def extract_bait_words(word_list):
             presence_of_bait_words = True
 
     return number_of_bait_words, presence_of_bait_words
-
-
-
-# string = "Hallo you das ist ein string!!!!!"
-# string1 = string.strip().split()
-# print(extract_bait_words(string1))
-#
-# sequence = ["MORE", "NUMBERS", "are", "always", "good.", "best", "easier"]
-# sequence = [x.lower() for x in sequence]
-# print(extract_bait_words(sequence))
-#
-#
-# print(int(999 * 0.25))
