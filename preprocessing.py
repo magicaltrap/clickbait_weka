@@ -1,11 +1,11 @@
 import json
-import arff
+import arff ## https://pypi.python.org/pypi/liac-arff
 import argparse
 import re
+import itertools
 
 from extracting_methods import *
 
-import itertools
 
 parser = argparse.ArgumentParser()
 
