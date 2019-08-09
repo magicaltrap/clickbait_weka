@@ -34,13 +34,14 @@ To make it simple, we will only use the "postText" key from the dataset for now.
 # Dataset and Feature Engineering
 Download the dataset on the [Clickbait Challange homepage](https://www.clickbait-challenge.org "Clickbait Challenge") (latest release date: June 30, 2017). The .zip file contains `instances.jsonl` and `truth.jsonl` that we need later.
 
-Weka requires an .arff file in order to run Machine Learning models. A .arff file looks like this:
+Weka requires an `.arff` file in order to run Machine Learning models. A `.arff` file looks like this:
 
 ![arff example](./images/arff_example.PNG)
 
-We need to write in the .arff file what kind of attributes we want to use (@ATTRIBUTE) and in @DATA one line represents one training/test example with our feature attributes. If you want to add or remove any features, just edit the methods in `extract_features.py` and then edit `preprocessing.py` as well (specifically start to edit at line 34, 49 and 81). 
+We need to write in the `.arff` file what kind of attributes we want to use (**@ATTRIBUTE**) and in **@DATA** one line represents one training/test example with our feature attributes. If you want to add or remove any features, just edit the methods in `extract_features.py` and then edit `preprocessing.py` as well (specifically start to edit at line **34, 49 and 81**). 
 
 I'm using the following features (that may or may not be useful, feature selection can be done later):
+
 * `id` ID of an example
 * `word count` How many words are in one Twitter post
 * `average word length`
@@ -61,7 +62,7 @@ Again, these features may or may not be useful for this task. You need to test i
 
 # Requirements
 * Download the latest [Weka](https://www.cs.waikato.ac.nz/ml/weka/downloading.html "Weka") version.
-* to create an .arff file, you need to download the [arff library](https://pypi.python.org/pypi/liac-arff) in your environment: `pip install liac-arff`
+* to create an `.arff` file, you need to download the [arff library](https://pypi.python.org/pypi/liac-arff) in your environment: `pip install liac-arff`
 
 # Usage
 
@@ -84,20 +85,20 @@ Now we can use our dataset in Weka.
 
 ![ratio](./images/01_ratio.PNG)
 
-2. Let's use a basic [Naive Bayes classifier model](https://en.wikipedia.org/wiki/Naive_Bayes_classifier "Naive Bayes") for this task first. Open the `Classify` tab and choose a Filtered Classifier: `Weka->classifiers->meta->FilteredClassifier`. 
-If you have used Weka before, you may wonder why not use the Naive Bayes classifier immediately (`weka->classifiers->bayes->NaiveBayes`) instead of a `FilteredClassifier`? It's because of the first feature in our preprocessed file `ID (of an example)`. Normally, you would just add numeric (e.g. `word count`) or nominal features (e.g. `whether start with number`) in an .arff file. In that case, you could directly use Weka models on the dataset. The `ID` of an instance is neither numeric nor nominal so this is something that a Weka model can't process and we need a `FilteredClassifier` for that. With a `FilteredClassifier` we can tell the model to ignore a feature during training but still keep it in the datatset. I decided to add the `ID` in the .arff file so I can output predictions during test time later (`e.g. ID: 858224473597779969, prediction: "clickbait"` as a .txt or .csv file) if necessary.
+2. Let's use a basic [Naive Bayes classifier model](https://en.wikipedia.org/wiki/Naive_Bayes_classifier "Naive Bayes") for this task first. Open the `Classify` tab and choose a Filtered Classifier: `weka->classifiers->meta->FilteredClassifier`. 
+If you have used Weka before, you may wonder why not use the Naive Bayes classifier immediately (`weka->classifiers->bayes->NaiveBayes`) instead of a `FilteredClassifier`? It's because of the first feature in our preprocessed file `ID (of an example)`. Normally, you would just add numeric (e.g. `word count`) or nominal features (e.g. `whether start with number`) in an `.arff` file. In that case, you could directly use Weka models on the dataset. The `ID` of an instance is neither numeric nor nominal so this is something that a Weka model can't process and we need a `FilteredClassifier` for that. With a `FilteredClassifier` we can tell the model to ignore a feature during training but still keep it in the datatset. I decided to add the `ID` in the .arff file so I can output predictions during test time later (`e.g. ID: 858224473597779969, prediction: "clickbait"` as a .txt or .csv file) if necessary.
 
 ![filtered](./images/02_filtered_classifier.PNG)
 
-3. Click on "FilteredClassifier" (1). Choose from "classifier" tab `NaiveBayes (weka->classifiers->bayes->NaiveBayes)`(2). Then choose from the "filter" tab `weka->filters->unsupervised->attribute->Remove` (3). With this, we can ignore an attribute during training time. Click on "Remove" and type "First" in the "attributeIndices" tab. This will ignore our first feature (`ID`) during training time.
+3. Click on "FilteredClassifier" (1). Choose from "classifier" tab `NaiveBayes (weka->classifiers->bayes->NaiveBayes)`(2). Then choose from the "filter" tab `weka->filters->unsupervised->attribute->Remove` (3). With this, we can ignore an attribute during training time. Click on "Remove" and type "First" in the `attributeIndices` tab. This will ignore our first feature (`ID`) during training time.
 
 ![remove](./images/03_remove.PNG)
 
-4) Now press `Start` to train our Machine Learning model. You can use either `Use training set`, `Cross-validation` or `Percentage split`. I use 10-Folds Cross-validation for now. Weka prints out an overview of our results with many useful scores and numbers:
+4) Now press `Start` to train our Machine Learning model. You can use either `Use training set`, `Cross-validation` or `Percentage split`. I use 10-Folds Cross-validation for now. Weka prints out an overview of our results with many useful scores:
 
 ![training_results](./images/04_training_results.PNG)
 
-As we can see, our Naive Bayes model classified 10761 correct examples (78.9%) and 2878 incorrect examples (21.1%). So at least, it is a bit better than our initial dataset distribition split (76%/24%). However, a bit alarming is the low "True Positive" (TP) rate of 0.440 for clickbait posts and the high "False Positive" (FP) rate of 0.560 (marking clickbait posts as no-clickbait) respectively. This means that our current model is bad at detecting clickbait posts when it sees one.   
+As we can see, our Naive Bayes model classified 10761 correct examples (**78.9%**) and 2878 incorrect examples (**21.1%**). So at least, it is a bit better than our initial dataset distribition split (76%/24%). However, a bit alarming is the low "True Positive" (TP) rate of 0.440 for clickbait posts and the high "False Positive" (FP) rate of 0.560 (marking clickbait posts as no-clickbait) respectively. This means that our current model is bad at detecting clickbait posts when it sees one.   
 
  **Confusion matrix of our Naive Bayes Model**
 
@@ -107,7 +108,7 @@ As we can see, our Naive Bayes model classified 10761 correct examples (78.9%) a
  | 1828 | 1439 |  b = clickbait
  
  
-Weka has an "Attribute Selection" feature which can calculate the most useful features for our dataset (see a Weka video tutorial [here](https://www.youtube.com/watch?v=Pf9yKjSiVnw&ab_channel=WekaMOOC "Attribute Selection"). After running it, out of the initial 14 features (word count - presence of bait words), we just keep `word count`, `length of the longest word`, `whether start with number`, `whether start with question word`, `number of capital letters` and `number of bait words`. This increases our accuracy to 81% but the FP rate is increasing as well. 
+Weka has an "Attribute Selection" feature which can calculate the most useful features for our dataset (see a Weka video tutorial [here](https://www.youtube.com/watch?v=Pf9yKjSiVnw&ab_channel=WekaMOOC "Attribute Selection"). After running it, out of the initial 14 features (word count - presence of bait words), we just keep `word count`, `length of the longest word`, `whether start with number`, `whether start with question word`, `number of capital letters` and `number of bait words`. This increases our accuracy to **81%** but the FP rate is increasing as well. 
 
 ![results_filtered](./images/05_results_filtered.PNG)
 
@@ -139,4 +140,6 @@ Not surprisingly, the results are quite similar to our training set (since both 
  | 834  | 615  |  b = clickbait
 
 
-This was a quick guide to Weka, how to train and test a model. I chose the Naive Bayes model initially because it is a model that is easy to understand and it converts very fast (0.04 seconds) in Weka. There are more models that you can try in Weka that will give better results, so please try it out.   
+# Summary
+
+This was a quick guide to Weka, how to train and test a classifier model. You can tell Weka to ignore a feature (e.g. `ID` in this case) during training so we can use this feature later for predictions if necessary. I chose the Naive Bayes model initially because it is a model that is easy to understand and it converts very fast (0.04 seconds) in Weka. There are more models that you can try in Weka that will give better results, so please try it out.   
