@@ -96,18 +96,47 @@ If you have used Weka before, you may wonder why not use the Naive Bayes classif
 5) Now press "Start" to train our Machine Learning model. You can use either `Use training set`, `Cross-validation` or `Percentage split`. I use 10-Folds Cross-validation for now. Weka prints out an overview of our results with many useful scores and numbers:
 ![results_training](./images/05_training_results.PNG)
 
-As we can see, our Naive Bayes model classified 10761 correct examples (78.9%) and 2878 incorrect examples (21.1%). So at least, it is a bit better than our initial dataset distribition (76%/24%). 
+As we can see, our Naive Bayes model classified 10761 correct examples (78.9%) and 2878 incorrect examples (21.1%). So at least, it is a bit better than our initial dataset distribition (76%/24%). However, a bit alarming is the low "True Positive" (TP) rate of 0.440 for clickbait posts and the high "False Positive" (FP) rate of 0.560 for no-clickbait posts respectively. This means that our current model is bad at detecting clickbait posts when it sees one.   
+
+ |   a  |  b   | <-- classified as
+ |------|------|-------------------
+ | 9322 | 1050 |  a = no-clickbait
+ | 1828 | 1439 |  b = clickbait
+ 
+ **Confusion matrix of our Naive Bayes Model**
+ 
+Weka has an "Attribute Selection" feature which can calculate the most useful features for our dataset (see a Weka video tutorial [here](https://www.youtube.com/watch?v=Pf9yKjSiVnw&ab_channel=WekaMOOC "Attribute Selection"). After running it, out of the initial 14 features (word count - presence of bait words), we just keep `word count`, `length of the longest word`, `whether start with number`, `whether start with question word`, `number of capital letters` and `number of bait words`. This increases our accuracy to 81% but the FP rate is increasing as well. 
+
+![results_filtered](./images/05_training_filtered.PNG)
+
+ |   a  |  b   | <-- classified as
+ |------|------|-------------------
+ | 9898 | 474  |  a = no-clickbait
+ | 2114 | 1153 |  b = clickbait
 
 
-#TODO
-- analyse results (FP rate)
-- print out Confusion Matrix
-- run Wrapper to select useful features
-- save and load model
-- run our test set on it
-- results of test set
-- you can replace the label with ? (add a source)
-- if you want, you can print out as csv file
+
+
+## Testing in Weka
+
+After training our model, save the model (right-click on the model: `Save Model` on your disk). Upload the saved model (right-click `Load Model`) (1). Then click on "Supplied test set" and load our `clickbait_test.arff` file as test set (2). 
+
+![test_instructions](./images/test01.PNG)
+
+Next, right-click on the loaded model and select `Re-evaluate model on current test set` and we get the results on our test set. 
+
+![test_instructions2](./images/test02.PNG)
+
+Not surprisingly, the results are quite similar to our training set (since both are from the same distribution). 
+
+![test_result](./images/test_results.PNG)
+
+
+ |   a  |  b   | <-- classified as
+ |------|------|-------------------
+ | 3981 | 415  |  a = no-clickbait
+ | 834  | 615 |  b = clickbait
 
 
 
+This was a quick guide to Weka, how to train and test a model. I chose the Naive Bayes model initially because it is a model that is easy  to understand and it converts very fast (0.04 seconds) in Weka. There are more models that you can try in Weka that will give better results, so please try it out.   
